@@ -6,7 +6,6 @@ from psycopg2 import OperationalError
 
 POLLING_FREQ = int(sys.argv[1]) if len(sys.argv) >= 2 else 60
 
-
 def print_psycopg2_exception(ex):
     # get details about the exception
     err_type, err_obj, traceback = sys.exc_info()
@@ -24,7 +23,6 @@ def print_psycopg2_exception(ex):
     # print the pgcode and pgerror exceptions
     print("pgerror:", ex.pgerror)
     print("pgcode:", ex.pgcode, "\n")
-
 
 if __name__ == "__main__":
 
