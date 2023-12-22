@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	CONNECTION = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
+	CONNECTION_STR_XML = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
+  CONNECTION_STR_REL = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
 )
 
 type ImportedDocument struct {

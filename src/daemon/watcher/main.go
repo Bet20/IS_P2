@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"time"
 	"watcher/db"
+	"watcher/message"
 
 	_ "github.com/lib/pq"
 )
@@ -29,18 +29,20 @@ func watch(importedDocuments []db.ImportedDocument) (bool, []db.ImportedDocument
 func main() {
 	fmt.Printf("Running Watcher daemon version %s", VERSION)
 	_, importedDocuments := watch(nil)
+	message.Send()
 
 	for range time.Tick(WATCHER_TICK) {
 		func() {
 			fmt.Printf("Checking db for changes...")
 			changed, newDocuments := watch(importedDocuments)
 			if changed {
+				message.Send()
 				// TODO: Changed
-				os.Exit(99)
+				fmt.Println("There have been changes made to imported_documents")
+			} else {
+				importedDocuments = newDocuments
+				fmt.Println("No changes were found...")
 			}
-			importedDocuments = newDocuments
-
-			fmt.Println("No changes were found...")
 		}()
 	}
 }
