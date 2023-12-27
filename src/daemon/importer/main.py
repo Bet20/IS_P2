@@ -7,6 +7,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 
 from utils.to_xml_converter import CSVtoXMLConverter
+from utils.uploader import upload_file_to_db, get_documents_from_db
+
 
 def get_csv_files_in_input_folder():
     return [os.path.join(dp, f) for dp, dn, filenames in os.walk(CSV_INPUT_PATH) for f in filenames if
@@ -35,6 +37,7 @@ class CSVHandler(FileSystemEventHandler):
         # here we avoid converting the same file again
         # !TODO: check converted files in the database
         if csv_path in await self.get_converted_files():
+            print(f"file '{csv_path}' already converted")
             return
 
         print(f"new file to convert: '{csv_path}'")
@@ -47,9 +50,19 @@ class CSVHandler(FileSystemEventHandler):
         convert_csv_to_xml(csv_path, xml_path)
         print(f"new xml file generated: '{xml_path}'")
 
+        f = open(xml_path, "r")
+        data = f.read()
+        f.close()
+
+        if upload_file_to_db(csv_path, data):
+            print("ok!")
+
         # !TODO: we should store the XML document into the imported_documents table
 
     async def get_converted_files(self):
+        documents = get_documents_from_db()
+        if len(documents) > 0:
+            return [doc[1] for doc in documents]
         # !TODO: you should retrieve from the database the files that were already converted before
         return []
 

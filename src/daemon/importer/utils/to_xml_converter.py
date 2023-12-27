@@ -1,17 +1,18 @@
-import csv
 import xml.dom.minidom as md
 import xml.etree.ElementTree as ET
 
-from reader import CSVReader
+from entities.Artist import Artist
 from entities.Label import Label
 from entities.Release import Release
-from entities.Artist import Artist
+from utils.reader import CSVReader
+
 
 class CSVtoXMLConverter:
     def __init__(self, path):
         self._reader = CSVReader(path)
         self._labels_dict = {}
         self._artists_dict = {}
+
 
     def get_or_create_label(self, row):
         label_id = row["label_id"]
