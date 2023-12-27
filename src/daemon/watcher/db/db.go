@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	CONNECTION_STR_XML = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
-  CONNECTION_STR_REL = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
+	CONNECTION_STR_XML = "user=is password=is dbname=is host=db-xml sslmode=disable"
 )
 
 type ImportedDocument struct {
@@ -28,10 +27,11 @@ type ImportedDocument struct {
 func ImportedDocuments() []ImportedDocument {
 	var imported_documents []ImportedDocument
 
-	conn, err := sql.Open("postgres", CONNECTION)
-	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION))
+	conn, err := sql.Open("postgres", CONNECTION_STR_XML)
+	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
 
 	if conn.Ping() != nil {
+    // TODO: Should have a recovery method
 		panic("Can't ping")
 	}
 

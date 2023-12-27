@@ -41,6 +41,7 @@ services:
       - ./docker/volumes/csv:/csv
     depends_on:
       - db-xml
+      - broker
 
   # Container that automatically migrates data from db-xml to db-rel
   migrator:

@@ -7,9 +7,9 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func Send() {
+func Send(id string) {
 	fmt.Println("Rabbitmq")
-	connection, err := amqp.Dial("amqp://is:is@localhost:5672")
+	connection, err := amqp.Dial("amqp://is:is@rabbitmq:5672/is")
 	utils.E(err)
 	defer connection.Close()
 
@@ -18,7 +18,7 @@ func Send() {
 	defer channel.Close()
 
 	queue, err := channel.QueueDeclare(
-		"testing",
+		"is",
 		false,
 		false,
 		false,
@@ -28,8 +28,8 @@ func Send() {
 
 	utils.E(err)
 	err = channel.Publish(
-		"",
-		"testing",
+		id,
+		queue.Name,
 		false,
 		false,
 		amqp.Publishing{

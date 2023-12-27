@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	CONNECTION_STR_XML  = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
-	CONNECTION_STR_REL  = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
+	CONNECTION_STR_XML  = "user=is password=is dbname=is host=db-xml port=10001 sslmode=disable"
+	CONNECTION_STR_REL  = "user=is password=is dbname=is host=db-rel port=10002 sslmode=disable"
 	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2)"
 	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3)"
 	INSERT_RELEASE_STMT = `INSERT INTO releases
