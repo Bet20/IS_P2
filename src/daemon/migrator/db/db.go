@@ -11,8 +11,21 @@ import (
 )
 
 const (
-	CONNECTION_STR_XML = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
-	CONNECTION_STR_REL = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
+	CONNECTION_STR_XML  = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
+	CONNECTION_STR_REL  = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
+	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2)"
+	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3)"
+	INSERT_RELEASE_STMT = `INSERT INTO release 
+    (id, 
+    original_id, 
+    title,
+    status,
+    genre,
+    style,
+    year,
+    notes,
+    artistId,
+    labelId) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`
 )
 
 type ImportedDocument struct {
@@ -59,6 +72,34 @@ func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {
 	if conn.Ping() != nil {
 		panic("There has been an error while pinging the database")
 	}
+
+	for _, artist := range discogs.Artists {
+		_, err = conn.Exec(INSERT_ARTIST_STMT, artist.Id, artist.Name)
+		utils.E(err, fmt.Sprintf("Artist relational db insert error, id: %d", artist.Id))
+	}
+
+	for _, label := range discogs.Labels {
+		_, err = conn.Exec(INSERT_LABEL_STMT, label.Id, label.Name, label.CompanyName)
+		utils.E(err, fmt.Sprintf("Label relational db insert error, id: %d", label.Id))
+	}
+
+	for _, release := range discogs.Releases {
+		_, err = conn.Exec(INSERT_RELEASE_STMT,
+			release.Id,
+			release.OriginalId,
+			release.Title,
+			release.Status,
+			release.Genre,
+			release.Style,
+			release.Year,
+			release.Notes,
+      release.ArtistRef,
+      release.LabelRef,
+		)
+    utils.E(err)
+	}
+
+  fmt.Println("finished loading the selected document to the relational database")
 
 	return nil
 }

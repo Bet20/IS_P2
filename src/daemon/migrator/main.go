@@ -20,5 +20,6 @@ func main() {
 
 	documentId := args[1]
 
-	db.GetXmlDocument(documentId)
+  document := db.GetDocument(documentId)
+  db.AddDocumentToRelationalDatabase(document)
 }

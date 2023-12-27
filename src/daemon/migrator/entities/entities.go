@@ -22,6 +22,8 @@ type Release struct {
 	Style      string `xml:"Style"`
 	Country    string `xml:"Country"`
 	Notes      string `xml:"Notes"`
+	ArtistRef  string `xml:"ArtistRef"`
+	LabelRef   string `xml:"LabelRef"`
 }
 
 type Label struct {
@@ -35,8 +37,8 @@ func NewArtist(id int, originalId string, name string) Artist {
 	return Artist{id, originalId, name}
 }
 
-func NewRelease(id int, originalId string, title string, status string, year string, genre string, style string, country string, notes string) Release {
-	return Release{id, originalId, title, status, year, genre, style, country, notes}
+func NewRelease(id int, originalId string, title string, status string, year string, genre string, style string, country string, notes string, artistRef string, labelRef string) Release {
+	return Release{id, originalId, title, status, year, genre, style, country, notes, artistRef, labelRef}
 }
 
 func NewLabel(id int, originalId string, name string, companyName string) Label {
