@@ -27,6 +27,37 @@ CREATE TABLE public.players (
 	updated_on      TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE public.artists (
+  id INT PRIMARY KEY,
+  name VARCHAR(250) NOT NULL
+)
+
+CREATE TABLE public.labels (
+  id INT PRIMARY KEY,
+  name VARCHAR(250) NOT NULL,
+  company_name VARCHAR(250) NOT NULL
+)
+
+CREATE TABLE public.releases (
+  id INT PRIMARY KEY,
+  title VARCHAR(250),
+  status VARCHAR(250),
+  year VARCHAR(250),
+  genre VARCHAR(250),
+  style VARCHAR(250),
+  notes TEXT
+)
+
+ALTER TABLE releases
+  ADD CONSTRAINT label_id
+    FOREIGN KEY (id) REFERENCES labels
+      ON DELETE CASCADE;
+
+ALTER TABLE releases
+  ADD CONSTRAINT artist_id
+    FOREIGN KEY (id) REFERENCES artists
+      ON DELETE CASCADE;
+
 ALTER TABLE players
     ADD CONSTRAINT players_countries_id_fk
         FOREIGN KEY (country_id) REFERENCES countries

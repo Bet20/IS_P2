@@ -15,17 +15,16 @@ const (
 	CONNECTION_STR_REL  = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
 	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2)"
 	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3)"
-	INSERT_RELEASE_STMT = `INSERT INTO release 
+	INSERT_RELEASE_STMT = `INSERT INTO releases
     (id, 
-    original_id, 
     title,
     status,
     genre,
     style,
     year,
     notes,
-    artistId,
-    labelId) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`
+    artist_id,
+    label_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`
 )
 
 type ImportedDocument struct {
@@ -86,7 +85,6 @@ func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {
 	for _, release := range discogs.Releases {
 		_, err = conn.Exec(INSERT_RELEASE_STMT,
 			release.Id,
-			release.OriginalId,
 			release.Title,
 			release.Status,
 			release.Genre,
