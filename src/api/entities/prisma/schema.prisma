@@ -11,11 +11,56 @@ datasource db {
 }
 
 model Teacher {
-  name       String   @id
-  city       String
-  createdOn  DateTime @default(now()) @map("created_on")
-  updatedOn  DateTime @updatedAt @map("updated_on")
+  name      String   @id
+  city      String
+  createdOn DateTime @default(now()) @map("created_on")
+  updatedOn DateTime @updatedAt @map("updated_on")
 
   @@map("teachers")
 }
 
+model Artist {
+  id   Int    @id
+  name String
+
+  createdOn DateTime @default(now()) @map("created_on")
+  updatedOn DateTime @updatedAt @map("updated_on")
+
+  releases Release[]
+
+  @@map("artists")
+}
+
+model Label {
+  id          Int    @id
+  name        String
+  companyName String
+
+  createdOn DateTime  @default(now()) @map("created_on")
+  updatedOn DateTime  @updatedAt @map("updated_on")
+  
+  release   Release[]
+
+  @@map("labels")
+}
+
+model Release {
+  id      Int    @id
+  title   String
+  status  String
+  year    String
+  genre   String
+  country String
+  notes   String
+
+  artist Artist @relation(fields: [artistId], references: [id])
+  label  Label  @relation(fields: [labelId], references: [id])
+
+  artistId Int @map("artist_id")
+  labelId  Int @map("label_id")
+
+  createdOn DateTime @default(now()) @map("created_on")
+  updatedOn DateTime @updatedAt @map("updated_on")
+
+  @@map("releases")
+}

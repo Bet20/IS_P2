@@ -13,11 +13,11 @@ const (
 )
 
 type ImportedDocument struct {
-	id         int
-	filename   string
-	created_on string
-	updated_on string
-	deleted_on string
+	Id         int
+	Filename   string
+	Created_on string
+	Updated_on string
+	Deleted_on string
 }
 
 // Returns the imported_documents from the db-xml.
@@ -45,7 +45,7 @@ func ImportedDocuments() []ImportedDocument {
 	for documents.Next() {
 		var document ImportedDocument
 
-		err := documents.Scan(&document.id, &document.filename, &document.created_on, &document.updated_on, &document.deleted_on)
+		err := documents.Scan(&document.Id, &document.Filename, &document.Created_on, &document.Updated_on, &document.Deleted_on)
 		utils.E(err)
 
 		imported_documents = append(imported_documents, document)
@@ -57,5 +57,5 @@ func ImportedDocuments() []ImportedDocument {
 }
 
 func (doc *ImportedDocument) Print() {
-	fmt.Printf("%d: %s\n", doc.id, doc.filename)
+	fmt.Printf("%d: %s\n", doc.Id, doc.Filename)
 }

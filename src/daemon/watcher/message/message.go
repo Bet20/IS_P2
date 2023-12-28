@@ -28,13 +28,13 @@ func Send(id string) {
 
 	utils.E(err)
 	err = channel.Publish(
-		id,
+		"",
 		queue.Name,
 		false,
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        []byte("There have been changes to the xml document db"),
+			Body:        []byte(id),
 		},
 	)
 

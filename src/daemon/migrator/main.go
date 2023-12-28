@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"migrator/consumer"
 	"migrator/db"
 	"os"
 )
@@ -13,13 +14,13 @@ const (
 func main() {
 	fmt.Printf("running Migrator (version %s\n)", VERSION)
 	args := os.Args
-	if len(args) < 2 {
-		fmt.Printf("Usage: migrator [document id]\n")
-		os.Exit(-1)
+	if len(args) > 1 {
+		documentId := args[1]
+
+		document := db.GetDocument(documentId)
+		db.AddDocumentToRelationalDatabase(document)
+		return
 	}
 
-	documentId := args[1]
-
-  document := db.GetDocument(documentId)
-  db.AddDocumentToRelationalDatabase(document)
+  consumer.Consume()
 }
