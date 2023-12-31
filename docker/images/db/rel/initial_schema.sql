@@ -45,6 +45,8 @@ CREATE TABLE public.releases (
   year VARCHAR(250),
   genre VARCHAR(250),
   style VARCHAR(250),
+  label_id INT,
+  artist_id INT,
   notes TEXT
 )
 
