@@ -5,10 +5,12 @@ import (
 	"migrator/consumer"
 	"migrator/db"
 	"os"
+  "time"
 )
 
 const (
 	VERSION = "0.0.1"
+  MIGRATOR_TICK = 60
 )
 
 func main() {
@@ -21,6 +23,6 @@ func main() {
 		db.AddDocumentToRelationalDatabase(document)
 		return
 	}
-
-  consumer.Consume()
+	
+	consumer.Consume()
 }

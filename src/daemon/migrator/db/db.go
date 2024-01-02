@@ -16,15 +16,7 @@ const (
 	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2)"
 	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3)"
 	INSERT_RELEASE_STMT = `INSERT INTO releases
-    (id, 
-    title,
-    status,
-    genre,
-    style,
-    year,
-    notes,
-    artist_id,
-    label_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`
+    (id, title, status, year, genre, style, country, label_id, artist_id, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`
 )
 
 type ImportedDocument struct {
@@ -61,6 +53,34 @@ func GetDocument(documentId string) entities.Discogs {
 	}
 
 	return discogs
+}
+func GetAllDocuments() []entities.Discogs {
+    conn, err := sql.Open("postgres", CONNECTION_STR_XML)
+    utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
+    defer conn.Close()
+
+    if conn.Ping() != nil {
+        panic("There has been an error while pinging the database")
+    }
+
+    documents, err := conn.Query("SELECT id FROM imported_documents")
+    utils.E(err)
+    defer documents.Close()
+
+    var allDiscogs []entities.Discogs
+    for documents.Next() {
+        var rawData string
+
+        err := documents.Scan(&rawData)
+        utils.E(err)
+
+        var discogs entities.Discogs
+        xml.Unmarshal([]byte(rawData), &discogs)
+
+        allDiscogs = append(allDiscogs, discogs)
+    }
+
+    return allDiscogs
 }
 
 func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {

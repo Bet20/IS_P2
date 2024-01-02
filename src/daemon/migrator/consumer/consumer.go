@@ -12,6 +12,8 @@ func Consume() {
 	utils.E(err)
 	defer connection.Close()
 
+  fmt.Println("amqp Consumer")
+
 	channel, err := connection.Channel()
 	utils.E(err)
 	defer channel.Close()

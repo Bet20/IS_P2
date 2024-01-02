@@ -2,14 +2,14 @@ import {Avatar, List, ListItem, ListItemIcon, ListItemText} from "@mui/material"
 import FlagIcon from '@mui/icons-material/Flag';
 import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt';
 import ContactsIcon from '@mui/icons-material/Contacts';
-import React from "react";
+import React, { useEffect } from "react";
 import {Marker, Popup} from 'react-leaflet';
 import {icon as leafletIcon, point} from "leaflet";
 
 const LIST_PROPERTIES = [
-    {"key": "country", label: "Country", Icon: FlagIcon},
-    {"key": "number", label: "Shirt Number", Icon: ContactsIcon},
-    {"key": "position", label: "Position", Icon: PictureInPictureAltIcon}
+    {"key": "title", label: "Title", Icon: FlagIcon},
+    {"key": "genre", label: "Genre", Icon: ContactsIcon},
+    {"key": "year", label: "Year", Icon: PictureInPictureAltIcon}
 ];
 
 export function ObjectMarker({geoJSON}) {
@@ -17,13 +17,17 @@ export function ObjectMarker({geoJSON}) {
     const {id, imgUrl, name} = properties;
     const coordinates = geoJSON?.geometry?.coordinates;
 
+    useEffect(() => {
+    console.log(coordinates)
+  }, [])
+
     return (
         <Marker
             position={coordinates}
             icon={leafletIcon({
                 iconUrl: imgUrl,
                 iconRetinaUrl: imgUrl,
-                iconSize: point(50, 50),
+                iconSize: point(40, 40),
             })}
         >
             <Popup>

@@ -1,9 +1,11 @@
 import sys
 import time
 import requests
+import psycopg2
 
 POLLING_FREQ = int(sys.argv[1]) if len(sys.argv) >= 2 else 60
 ENTITIES_PER_ITERATION = int(sys.argv[2]) if len(sys.argv) >= 3 else 10
+CONN_STRING = "host='db-rel' dbname='is' user='is' password='is'"
 
 def get_country_gis(codes):
     """using https://restcountries.com/#rest-countries"""
@@ -14,18 +16,29 @@ def get_country_gis(codes):
     except Exception as e:
         return e
 
-def update_entitie(id, latlong):
+def update_entity(id, latlong):
+    conn = psycopg2.connect(CONN_STRING)
+    cursor = conn.cursor()
+    query = "UPDATE releases SET has_geolocation = true, lat = %, long = % WHERE id = %"
+    lat = latlong[0]
+    long = latlong[1]
+
+    cursor.execute(query, (lat, long, id, ))
+    records = cursor.fetchall()
+
+ 
 
 if __name__ == "__main__":
 
     while True:
         print(f"Getting up to {ENTITIES_PER_ITERATION} entities without coordinates...")
-        # !TODO: 1- Use api-gis to retrieve a fixed amount of entities without coordinates (e.g. 100 entities per iteration, use ENTITIES_PER_ITERATION)
-        data = requests.get(f"http://0.0.0.0:20002/api/without_coordinates?limit={ENTITIES_PER_ITERATION}").json()
+        # data = requests.get(f"http://0.0.0.0:20002/api/without_coordinates?limit={ENTITIES_PER_ITERATION}").json()
+        data = []
         if data:
             for ent in data:
-                lat_long = get_country_gis(ent['country'])
-
+                country = ent.get('country')
+                if country:
+                    lat_long = get_country_gis(ent['country'])
 
         # !TODO: 2- Use the entity information to retrieve coordinates from an external API
         # !TODO: 3- Submit the changes
