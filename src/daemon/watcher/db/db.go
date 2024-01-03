@@ -31,7 +31,7 @@ func ImportedDocuments() []ImportedDocument {
 	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
 
 	if conn.Ping() != nil {
-    // TODO: Should have a recovery method
+		// TODO: Should have a recovery method
 		panic("Can't ping")
 	}
 
@@ -54,6 +54,35 @@ func ImportedDocuments() []ImportedDocument {
 	documents.Close()
 	conn.Close()
 	return imported_documents
+}
+
+func GetCountriesFromDocument(documentId string) []string {
+	conn, err := sql.Open("postgres", CONNECTION_STR_XML)
+	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
+
+	if conn.Ping() != nil {
+		panic("Can't ping")
+	}
+	if conn == nil {
+		panic("Connection is nil")
+	}
+
+	rows, err := conn.Query(`with tbl(file) as (SELECT xml FROM imported_documents where id = $1)
+    SELECT xpath('/Discogs/Releases/Release/Country/text()', file) FROM tbl;`, documentId)
+
+	utils.E(err)
+	countries := []string{}
+	for rows.Next() {
+		var country string
+		err := rows.Scan(&country)
+		utils.E(err)
+		fmt.Println(country)
+		countries = append(countries, country)
+	}
+
+	rows.Close()
+	conn.Close()
+	return countries
 }
 
 func (doc *ImportedDocument) Print() {

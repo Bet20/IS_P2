@@ -23,14 +23,18 @@ func printImportedDocuments(importedDocuments []db.ImportedDocument) {
 }
 
 func watch(importedDocuments []db.ImportedDocument) (int, []db.ImportedDocument) {
+
+	updatedImportedDocuments := importedDocuments
 	newImportedDocuments := db.ImportedDocuments()
+
 	if reflect.DeepEqual(newImportedDocuments, importedDocuments) {
-		return -1, newImportedDocuments
+		println("DOCUMENTS ARE DeeplyEqual")
+		return -1, importedDocuments
 	}
 
-	for _, newDoc := range newImportedDocuments {
+	for i, newDoc := range newImportedDocuments {
 		exists := false
-		for _, oldDoc := range newImportedDocuments {
+		for _, oldDoc := range importedDocuments {
 			if newDoc.Filename == oldDoc.Filename {
 				exists = true
 				break
@@ -38,27 +42,27 @@ func watch(importedDocuments []db.ImportedDocument) (int, []db.ImportedDocument)
 		}
 
 		if !exists {
-			return newDoc.Id, newImportedDocuments
+			updatedImportedDocuments = append(updatedImportedDocuments, newImportedDocuments[i])
+			return newDoc.Id, updatedImportedDocuments
 		}
 	}
-	return -1, newImportedDocuments
+
+	return -1, importedDocuments
 }
 
 func main() {
 	fmt.Printf("Running Watcher daemon version %s", VERSION)
-	newDocumentId, importedDocuments := watch(nil)
-	message.Send(strconv.Itoa(newDocumentId))
+	_, importedDocuments := watch(nil)
 
 	for range time.Tick(WATCHER_TICK) {
 		func() {
 			fmt.Printf("Checking db for changes...")
 			newDocumentId, newDocuments := watch(importedDocuments)
 			if newDocumentId != -1 {
-				message.Send(strconv.Itoa(newDocumentId))
-				// TODO: Changed
+				message.Send(strconv.Itoa(newDocumentId), db.GetCountriesFromDocument(strconv.Itoa(newDocumentId)))
+				importedDocuments = newDocuments
 				fmt.Println("There have been changes made to imported_documents")
 			} else {
-				importedDocuments = newDocuments
 				fmt.Println("No changes were found...")
 			}
 		}()
