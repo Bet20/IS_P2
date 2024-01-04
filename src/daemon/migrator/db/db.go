@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	CONNECTION_STR_XML  = "user=is password=is dbname=is host=0.0.0.0 port=10001 sslmode=disable"
-	CONNECTION_STR_REL  = "user=is password=is dbname=is host=0.0.0.0 port=10002 sslmode=disable"
+	CONNECTION_STR_XML  = "user=is password=is dbname=is host=db-xml port=10001 sslmode=disable"
+	CONNECTION_STR_REL  = "user=is password=is dbname=is host=db-rel port=10002 sslmode=disable"
 	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2)"
 	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3)"
 	INSERT_RELEASE_STMT = `INSERT INTO releases
@@ -33,7 +33,7 @@ func GetDocument(documentId string) entities.Discogs {
 	defer conn.Close()
 
 	if conn.Ping() != nil {
-		panic("There has been an error while pinging the database")
+		panic("There has been an error while pinging the database, XML")
 	}
 
 	documents, err := conn.Query("SELECT xml FROM imported_documents WHERE id = $1;", documentId)
@@ -55,32 +55,32 @@ func GetDocument(documentId string) entities.Discogs {
 	return discogs
 }
 func GetAllDocuments() []entities.Discogs {
-    conn, err := sql.Open("postgres", CONNECTION_STR_XML)
-    utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
-    defer conn.Close()
+	conn, err := sql.Open("postgres", CONNECTION_STR_XML)
+	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
+	defer conn.Close()
 
-    if conn.Ping() != nil {
-        panic("There has been an error while pinging the database")
-    }
+	if conn.Ping() != nil {
+		panic("There has been an error while pinging the database, REL")
+	}
 
-    documents, err := conn.Query("SELECT id FROM imported_documents")
-    utils.E(err)
-    defer documents.Close()
+	documents, err := conn.Query("SELECT id FROM imported_documents")
+	utils.E(err)
+	defer documents.Close()
 
-    var allDiscogs []entities.Discogs
-    for documents.Next() {
-        var rawData string
+	var allDiscogs []entities.Discogs
+	for documents.Next() {
+		var rawData string
 
-        err := documents.Scan(&rawData)
-        utils.E(err)
+		err := documents.Scan(&rawData)
+		utils.E(err)
 
-        var discogs entities.Discogs
-        xml.Unmarshal([]byte(rawData), &discogs)
+		var discogs entities.Discogs
+		xml.Unmarshal([]byte(rawData), &discogs)
 
-        allDiscogs = append(allDiscogs, discogs)
-    }
+		allDiscogs = append(allDiscogs, discogs)
+	}
 
-    return allDiscogs
+	return allDiscogs
 }
 
 func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {
@@ -111,13 +111,13 @@ func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {
 			release.Style,
 			release.Year,
 			release.Notes,
-      release.ArtistRef,
-      release.LabelRef,
+			release.ArtistRef,
+			release.LabelRef,
 		)
-    utils.E(err)
+		utils.E(err)
 	}
 
-  fmt.Println("finished loading the selected document to the relational database")
+	fmt.Println("finished loading the selected document to the relational database")
 
 	return nil
 }

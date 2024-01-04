@@ -7,16 +7,19 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func sendCountryShouldCreateMessage(country []string, queue amqp.Queue, channel *amqp.Channel) {
-	msg := "["
-	for _, c := range country {
-		msg += fmt.Sprintf(`{"name": "%s"}`, c)
+func sendCountryShouldCreateMessage(countries []string, queue amqp.Queue, channel *amqp.Channel) {
+	msg := "{\"countries\":[" + "\"" + countries[0] + "\""
+
+	for _, c := range countries {
+		msg += fmt.Sprintf(`, "%s"`, c)
 	}
-	msg += "]"
+	msg += "]}"
+
+	fmt.Println(msg)
 
 	err := channel.Publish(
-		"",
-		queue.Name,
+		"preference_exchange",
+		"high_priority",
 		false,
 		false,
 		amqp.Publishing{
@@ -27,27 +30,26 @@ func sendCountryShouldCreateMessage(country []string, queue amqp.Queue, channel 
 	)
 
 	utils.E(err)
-	fmt.Println("Queue: ", queue)
-	fmt.Println("Published Successfully")
+	fmt.Println("Published 'SHOULD CREATE COUNTRY' Successfully")
 }
 
 func sendDocumentShouldMigrateMessage(documentId string, queue amqp.Queue, channel *amqp.Channel) {
+	msg := fmt.Sprintf(`{"document_id": "%s"}`, documentId)
+
 	err := channel.Publish(
-		"",
-		queue.Name,
+		"preference_exchange",
+		"low_priority",
 		false,
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        []byte(documentId),
+			Body:        []byte(msg),
 			Priority:    0,
 		},
 	)
 
 	utils.E(err)
-	fmt.Println("Queue: ", queue)
-	fmt.Println("Published Successfully")
-
+	fmt.Println("Published 'SHOULD MIGRATE' Successfully")
 }
 
 func Send(documentId string, countries []string) {
@@ -66,15 +68,23 @@ func Send(documentId string, countries []string) {
 	queue_arguments["x"] = 10
 
 	var queue amqp.Queue
-
-	queue, err = channel.QueueDeclare(
-		"is",
-		false,
-		false,
-		false,
-		false,
-		queue_arguments,
+	err = channel.ExchangeDeclare(
+		"preference_exchange", // Exchange name
+		"direct",              // Exchange type
+		true,                  // Durable
+		false,                 // Auto-delete
+		false,                 // Internal
+		false,                 // No-wait
+		nil,
 	)
+	// queue, err = channel.QueueDeclare(
+	// 	"is",
+	// 	false,
+	// 	false,
+	// 	false,
+	// 	false,
+	// 	queue_arguments,
+	// )
 	utils.E(err)
 
 	sendCountryShouldCreateMessage(countries, queue, channel)

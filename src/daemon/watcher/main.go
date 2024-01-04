@@ -27,6 +27,9 @@ func watch(importedDocuments []db.ImportedDocument) (int, []db.ImportedDocument)
 	updatedImportedDocuments := importedDocuments
 	newImportedDocuments := db.ImportedDocuments()
 
+	printImportedDocuments(updatedImportedDocuments)
+	printImportedDocuments(newImportedDocuments)
+
 	if reflect.DeepEqual(newImportedDocuments, importedDocuments) {
 		println("DOCUMENTS ARE DeeplyEqual")
 		return -1, importedDocuments
@@ -59,9 +62,10 @@ func main() {
 			fmt.Printf("Checking db for changes...")
 			newDocumentId, newDocuments := watch(importedDocuments)
 			if newDocumentId != -1 {
+				// Create set out of countries
+				fmt.Printf("There have been changes made to imported_documents %d\n", (newDocumentId))
 				message.Send(strconv.Itoa(newDocumentId), db.GetCountriesFromDocument(strconv.Itoa(newDocumentId)))
 				importedDocuments = newDocuments
-				fmt.Println("There have been changes made to imported_documents")
 			} else {
 				fmt.Println("No changes were found...")
 			}

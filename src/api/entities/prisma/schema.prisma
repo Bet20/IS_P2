@@ -10,15 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Teacher {
-  name      String   @id
-  city      String
-  createdOn DateTime @default(now()) @map("created_on")
-  updatedOn DateTime @updatedAt @map("updated_on")
-
-  @@map("teachers")
-}
-
 model Artist {
   id   Int    @id
   name String

@@ -67,21 +67,26 @@ func GetCountriesFromDocument(documentId string) []string {
 		panic("Connection is nil")
 	}
 
-	rows, err := conn.Query(`with tbl(file) as (SELECT xml FROM imported_documents where id = $1)
-    SELECT xpath('/Discogs/Releases/Release/Country/text()', file) FROM tbl;`, documentId)
+	rows, err := conn.Query(`
+	WITH tbl(file) AS (SELECT xml FROM imported_documents WHERE id = $1)
+SELECT DISTINCT value
+FROM tbl,
+     XMLTABLE('/Discogs/Releases/Release/Country'
+              PASSING XMLPARSE(DOCUMENT file)
+              COLUMNS value VARCHAR(255) PATH 'text()') AS country_values;`, documentId)
 
 	utils.E(err)
-	countries := []string{}
+	var countries []string
 	for rows.Next() {
 		var country string
 		err := rows.Scan(&country)
 		utils.E(err)
-		fmt.Println(country)
 		countries = append(countries, country)
 	}
 
 	rows.Close()
 	conn.Close()
+	fmt.Printf("Countries: %v\n", countries)
 	return countries
 }
 
