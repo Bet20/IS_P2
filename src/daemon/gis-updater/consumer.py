@@ -43,16 +43,21 @@ def callback(ch, method, properties, body):
         countries = lower_and_fix_edge_cases(countries)
         print("countries: ", countries)
         for country in countries:
-            data = get_country_gis(country)
+            try:
+                data = get_country_gis(country)
 
-            if not data:
-                break
+                if not data:
+                    break
 
-            for d in data:
-                lat = d.get('latlng')[0]
-                long = d.get('latlng')[1]
-                name = d.get('name').get('common') if d.get('name').get('common') else country
-                update_entity(name, lat, long)
+                for d in data:
+
+                    lat = d.get('latlng')[0]
+                    long = d.get('latlng')[1]
+                    name = d.get('name').get('common') if d.get('name').get('common') else country
+                    update_entity(name, lat, long)
+            except Exception as e:
+                print(f"failed to insert {country} into db: ", e)
+                continue
 
         print("****** Gis-Updater is updating GIS data ******")
         ch.basic_ack(delivery_tag=method.delivery_tag)

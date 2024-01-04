@@ -1,11 +1,21 @@
+import Releases from "../Procedures/Releases";
 import TopTeams from "../Procedures/TopTeams";
 
 const Sections = [
-
     {
-        id: "top-teams",
-        label: "Top Teams",
-        content: <TopTeams/>
+        id: "releases",
+        label: "Releases",
+        content: <Releases/>
+    },
+    {
+        id: "labels",
+        label: "Labels",
+        content: "Labels"
+    },
+    {
+        id: "artists",
+        label: "Artists",
+        content: "Artists"
     },
 
     {
