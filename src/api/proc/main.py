@@ -75,90 +75,29 @@ SELECT
 FROM tbl,
      unnest(xpath('/Discogs/Releases/Release', xml)) AS releases(rel);"""
         , fetch=True)
-    
 
     return json.dumps(data[0][0])
 
-@app.route('/api/release_titles', methods=['GET'])
-def all_release_titles():
-    return execute_query(xml_table_prefix + " SELECT xpath('/Discogs/Releases/Release/Title/text()', file) FROM tbl", fetch=True)
+# def get_all_documents():
+#     data = execute_query(
+#         """
+#             SELECT
+#             json_build_object(
+#             'id', json_agg(id),
+#             'title', json_agg(file_name)
+#             )
+#             FROM imported_documents;
+# """)
 
+#     return json.dumps(data[0][0])
 
-def count_releases():
-    return execute_query(xml_table_prefix + "SELECT count ( SELECT xpath('/discogs/releases/Release', file) FROM tbl )", fetch=True)
-
-
-@app.route('/api/artists', methods=['GET'])
-def all_artists():
-    return execute_query(xml_table_prefix + "SELECT xpath('/Discogs/Artists/Artist/Name/text()', file) FROM tbl", fetch=True)
-
-def artist_name_by_id(*artist_id):
-    return execute_query(xml_table_prefix + "SELECT xpath('/Discogs/Artists/Artist[@id='%s']', file) FROM tbl", (artist_id), fetch=True)
-
-
-def releases_from_artist_by_name(*artist_name):
-    artist_id = execute_query(xml_table_prefix + "SELECT xpath('/Discogs/Artists/Artist[Name='%s']/@id', file) FROM tbl", (artist_name), fetch=True)
-    artist_id = artist_id[0][0].replace('{', '').replace('}', '')
-    return execute_query(xml_table_prefix + f" SELECT xpath('//Release[ArtistRef={artist_id}]', file) FROM tbl ", (artist_id), fetch=True)
-
-
-def releases_from_artist_by_id(*artist_id):
-    return execute_query(xml_table_prefix + f" SELECT xpath('//Release[ArtistRef=%s]', file) FROM tbl ", (artist_id), fetch=True)
-
-def releases_from_label_by_name(*label_name):
-    label_id = execute_query(xml_table_prefix + "SELECT xpath('/Discogs/Labels/Label[Name='%s']/@id', file) FROM tbl", (label_name), fetch=True)
-    label_id = label_id[0][0].replace('{', '').replace('}', '')
-    return execute_query(xml_table_prefix + f" SELECT xpath('//Release[LabelRef={label_id}]', file) FROM tbl ", (label_id), fetch=True)
-
-def releases_from_label_by_id(*label_id):
-    return execute_query(xml_table_prefix + f" SELECT xpath('//Release[LabelRef=%s]', file) FROM tbl ", (label_id), fetch=True)
-
-@app.route('/api/labels', methods=['GET'])
-def all_labels():
-    return execute_query(xml_table_prefix + "SELECT xpath('/Discogs/labels/label/name/text()', file) FROM tbl", fetch=True)
-
-def label_by_id(label_id):
-    return execute_query(xml_table_prefix + "SELECT xpath('/discogs/labels/label[@id=%s]/name/text()', file) FROM tbl", (label_id,), fetch=True)
-
-def label_by_name(label_name):
-    return execute_query(xml_table_prefix + "SELECT xpath('/discogs/labels/label[name=%s]/name/text()', file) FROM tbl", (label_name,), fetch=True)
-
-# Simple count queries, TODO: Write more nuanced counting queries
-
-@app.route('/api/count/releases', methods=['GET'])
-def count_releases():
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release)', file) FROM tbl", fetch=True)
-
-@app.route('/api/count/labels', methods=['GET'])
-def count_labels():
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Artist)', file) FROM tbl", fetch=True)
-
-@app.route('/api/count/artists', methods=['GET'])
-def count_artists():
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Label)', file) FROM tbl", fetch=True)
-
-# Count releses from a specific label
-@app.route('/api/count/releases/', methods=['GET'])
-def count_releases_from_label(label):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[LabelRef=%s])', file) FROM tbl", (label,), fetch=True)
-
-def count_releases_from_artist(artist):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[ArtistRef=%s])', file) FROM tbl", (artist,), fetch=True)
-
-def count_releases_before_year(year):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[Year < %s])', file) FROM tbl", (year,), fetch=True)
-
-def count_releases_after_year(year):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[Year > %s])', file) FROM tbl", (year,), fetch=True)
-
-def count_releases_from_country(country):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[Country=%s])', file) FROM tbl", (country,), fetch=True)
-
-def count_releases_from_genre(genre):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[contains(Genre, %s)])', file) FROM tbl", (genre,), fetch=True)
-
-def count_releases_from_style(style):
-    return execute_query(xml_table_prefix + "SELECT xpath('count(//Release[contains(Style, %s)])', file) FROM tbl", (style,), fetch=True)
+@app.route('/api/releases_options', methods=['GET'])
+def get_documents_ids():
+    data = execute_query(
+        """
+            SELECT id FROM imported_documents;
+""")
+    return list(map(lambda x: x[0], data))
 
 if __name__ == '__main__':
     print("Starting API...")

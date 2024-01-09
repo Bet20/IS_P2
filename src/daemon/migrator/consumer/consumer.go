@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
+  "fmt"
 	"migrator/db"
 
 	"github.com/streadway/amqp"
@@ -82,6 +82,7 @@ func Consume() {
 				return
 			}
 			docReference := db.GetDocument(broker.DocumentId)
+			fmt.Printf("Document: %v\n", docReference)
 			db.AddDocumentToRelationalDatabase(docReference)
 		}
 	}()

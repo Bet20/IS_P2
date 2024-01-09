@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"migrator/consumer"
+	"migrator/db"
+
 	// "migrator/db"
 	// "os"
 	"time"
@@ -26,6 +28,7 @@ func main() {
 
 	for range time.Tick(MIGRATOR_TICK) {
 		fmt.Printf("MIGRATOR TICK")
+    fmt.Printf("%v", db.GetAllDocuments())
 		consumer.Consume()
 	}
 }

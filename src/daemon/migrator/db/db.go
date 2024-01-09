@@ -11,12 +11,13 @@ import (
 )
 
 const (
-	CONNECTION_STR_XML  = "user=is password=is dbname=is host=db-xml port=10001 sslmode=disable"
-	CONNECTION_STR_REL  = "user=is password=is dbname=is host=db-rel port=10002 sslmode=disable"
-	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2)"
-	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3)"
+	CONNECTION_STR_XML  = "user=is password=is dbname=is host=db-xml sslmode=disable"
+	CONNECTION_STR_REL  = "user=is password=is dbname=is host=db-rel sslmode=disable"
+	INSERT_ARTIST_STMT  = "INSERT INTO artists (id, name) VALUES ($1, $2) ON CONFLICT DO NOTHING"
+	INSERT_LABEL_STMT   = "INSERT INTO labels (id, name, company_name) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
 	INSERT_RELEASE_STMT = `INSERT INTO releases
-    (id, title, status, year, genre, style, country, label_id, artist_id, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`
+    (id, title, status, year, genre, style, country, label_id, artist_id, notes) VALUES ($1, $2, $3, $4, $5, $6, (SELECT id FROM public.countries WHERE name = $7), $8, $9, $10)
+	`
 )
 
 type ImportedDocument struct {
@@ -40,20 +41,31 @@ func GetDocument(documentId string) entities.Discogs {
 	utils.E(err)
 	defer documents.Close()
 
-	var discogs entities.Discogs
+  fmt.Println("DOCUMENT ID: ", documentId)
+
+	var discogsSlice []entities.Discogs
+
 	for documents.Next() {
 		var rawData string
-
 		err := documents.Scan(&rawData)
 		utils.E(err)
 
-		xml.Unmarshal([]byte(rawData), &discogs)
+		var discogs entities.Discogs
+		err = xml.Unmarshal([]byte(rawData), &discogs)
+		utils.E(err)
 
-		discogs.Print()
+    fmt.Printf("%v", discogs)
+
+		discogsSlice = append(discogsSlice, discogs)
 	}
 
-	return discogs
+	if len(discogsSlice) > 0 {
+		return discogsSlice[0]
+	}
+
+	return entities.Discogs{}
 }
+
 func GetAllDocuments() []entities.Discogs {
 	conn, err := sql.Open("postgres", CONNECTION_STR_XML)
 	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
@@ -92,6 +104,8 @@ func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {
 		panic("There has been an error while pinging the database")
 	}
 
+	fmt.Printf("ADDING THESE DOCUMENTS %v", discogs)
+
 	for _, artist := range discogs.Artists {
 		_, err = conn.Exec(INSERT_ARTIST_STMT, artist.Id, artist.Name)
 		utils.E(err, fmt.Sprintf("Artist relational db insert error, id: %d", artist.Id))
@@ -107,12 +121,13 @@ func AddDocumentToRelationalDatabase(discogs entities.Discogs) error {
 			release.Id,
 			release.Title,
 			release.Status,
+			release.Year,
 			release.Genre,
 			release.Style,
-			release.Year,
-			release.Notes,
+			release.Country,
 			release.ArtistRef,
 			release.LabelRef,
+			release.Notes,
 		)
 		utils.E(err)
 	}

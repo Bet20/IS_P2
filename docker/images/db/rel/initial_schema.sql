@@ -3,8 +3,8 @@ CREATE EXTENSION IF NOT EXISTS POSTGIS;
 CREATE EXTENSION IF NOT EXISTS POSTGIS_TOPOLOGY;
 
 CREATE TABLE public.countries (
-	id              uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-	name            VARCHAR(250) UNIQUE NOT NULL,
+	id              serial PRIMARY KEY,
+  name            VARCHAR(250) UNIQUE NOT NULL,
 	geom            GEOMETRY,
 	created_on      TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_on      TIMESTAMP NOT NULL DEFAULT NOW()
@@ -32,20 +32,10 @@ CREATE TABLE public.releases (
   year VARCHAR(250),
   genre VARCHAR(250),
   style VARCHAR(250),
-  country uuid,
+  country INT,
   label_id INT,
   artist_id INT,
   notes TEXT,
   created_on      TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_on      TIMESTAMP NOT NULL DEFAULT NOW()
 );
-
-ALTER TABLE releases
-  ADD CONSTRAINT label_id
-    FOREIGN KEY (id) REFERENCES labels
-      ON DELETE CASCADE;
-
-ALTER TABLE releases
-  ADD CONSTRAINT artist_id
-    FOREIGN KEY (id) REFERENCES artists
-      ON DELETE CASCADE;

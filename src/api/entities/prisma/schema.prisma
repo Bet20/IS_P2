@@ -9,49 +9,52 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+// Define the data model
+model Country {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  geom      Json?
+  createdOn DateTime @default(now())
+  updatedOn DateTime @default(now())
+}
 
 model Artist {
-  id   Int    @id
-  name String
+  id        Int      @id
+  name      String
+  createdOn DateTime @default(now())
+  updatedOn DateTime @default(now())
 
-  createdOn DateTime @default(now()) @map("created_on")
-  updatedOn DateTime @updatedAt @map("updated_on")
-
-  releases Release[]
-
-  @@map("artists")
+  // Define relationships
+  releases  Release[]
 }
 
 model Label {
-  id          Int    @id
-  name        String
-  companyName String
+  id           Int      @id
+  name         String
+  companyName  String
+  createdOn    DateTime @default(now())
+  updatedOn    DateTime @default(now())
 
-  createdOn DateTime  @default(now()) @map("created_on")
-  updatedOn DateTime  @updatedAt @map("updated_on")
-  
-  release   Release[]
-
-  @@map("labels")
+  // Define relationships
+  releases     Release[]
 }
 
 model Release {
-  id      Int    @id
-  title   String
-  status  String
-  year    String
-  genre   String
-  country String
-  notes   String
+  id        Int      @id
+  title     String
+  status    String
+  year      String
+  genre     String
+  style     String
+  country   Int?
+  labelId   Int?
+  artistId  Int?
+  notes     String?
+  createdOn DateTime @default(now())
+  updatedOn DateTime @default(now())
 
-  artist Artist @relation(fields: [artistId], references: [id])
-  label  Label  @relation(fields: [labelId], references: [id])
-
-  artistId Int @map("artist_id")
-  labelId  Int @map("label_id")
-
-  createdOn DateTime @default(now()) @map("created_on")
-  updatedOn DateTime @updatedAt @map("updated_on")
-
-  @@map("releases")
+  // Define relationships
+  country   Country? @relation(fields: [country], references: [id])
+  label     Label?   @relation(fields: [labelId], references: [id])
+  artist    Artist?  @relation(fields: [artistId], references: [id])
 }
