@@ -45,7 +45,13 @@ func ImportedDocuments() []ImportedDocument {
 	for documents.Next() {
 		var document ImportedDocument
 
-		err := documents.Scan(&document.Id, &document.Filename, &document.Created_on, &document.Updated_on, &document.Deleted_on)
+		err := documents.Scan(
+			&document.Id,
+			&document.Filename,
+			&document.Created_on,
+			&document.Updated_on,
+			&document.Deleted_on,
+		)
 		utils.E(err)
 
 		imported_documents = append(imported_documents, document)

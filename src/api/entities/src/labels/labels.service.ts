@@ -5,7 +5,8 @@ import { PrismaClient } from '@prisma/client';
 export class LabelsService {
     private prisma = new PrismaClient();
 
-    async findAll({skip = 0, take = 10}: { skip?: number; take?: number } = {}): Promise<any[]> {
+    async findAll({skip = 0, take = 10}: 
+        { skip?: number; take?: number } = {}): Promise<any[]> {
         return this.prisma.labels.findMany({
             skip,
             take,

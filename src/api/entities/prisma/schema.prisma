@@ -10,6 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 // Define the data model
+
 model countries {
   id        Int      @id @default(autoincrement())
   name      String   @unique
@@ -26,7 +27,6 @@ model artists {
   created_on DateTime @default(now())
   updated_on DateTime @default(now())
 
-  // Define relationships
   releases  releases[]
 }
 
@@ -37,7 +37,6 @@ model labels {
   created_on    DateTime @default(now())
   updated_on    DateTime @default(now())
 
-  // Define relationships
   releases     releases[]
 }
 
@@ -56,7 +55,6 @@ model releases {
   label_id Int?
   artist_id Int?
 
-  // Define relationships
   c   countries? @relation(fields: [country], references: [id])
   l     labels?   @relation(fields: [label_id], references: [id])
   a    artists?  @relation(fields: [artist_id], references: [id])

@@ -77,14 +77,7 @@ func Send(documentId string, countries []string) {
 		false,                 // No-wait
 		nil,
 	)
-	// queue, err = channel.QueueDeclare(
-	// 	"is",
-	// 	false,
-	// 	false,
-	// 	false,
-	// 	false,
-	// 	queue_arguments,
-	// )
+
 	utils.E(err)
 
 	sendCountryShouldCreateMessage(countries, queue, channel)

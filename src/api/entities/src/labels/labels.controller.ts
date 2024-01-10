@@ -19,7 +19,10 @@ export class LabelsController {
     }
 
     @Post()
-      async create(@Body() body: { id: number; name: string; company_name: string }) {
+      async create(@Body() body: { 
+        id: number; 
+        name: string; 
+        company_name: string }) {
         const { id, name, company_name } = body;
         return this.labelsService.create({ id, name, company_name });
       }

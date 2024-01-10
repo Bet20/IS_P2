@@ -2,13 +2,13 @@ package consumer
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"migrator/db"
 	"migrator/utils"
 	"os"
 	"os/signal"
 	"syscall"
-  "fmt"
-	"migrator/db"
 
 	"github.com/streadway/amqp"
 )
@@ -30,7 +30,6 @@ func Consume() {
 	utils.E(err, "Failed to open a channel")
 	defer ch.Close()
 
-	// Declare a direct exchange named "preference_exchange"
 	err = ch.ExchangeDeclare(
 		"preference_exchange", // Exchange name
 		"direct",              // Exchange type
@@ -52,7 +51,6 @@ func Consume() {
 	)
 	utils.E(err, "Failed to declare a queue")
 
-	// Bind the queue to the exchange with routing key "low_priority"
 	err = ch.QueueBind(
 		q.Name,                // Queue name
 		"low_priority",        // Routing key

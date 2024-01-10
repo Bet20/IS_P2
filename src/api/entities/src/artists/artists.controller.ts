@@ -1,4 +1,4 @@
-import {Controller, Get, Query} from '@nestjs/common';
+import {Body, Controller, Get, Post, Query} from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 
 @Controller('artists')
@@ -17,4 +17,10 @@ export class ArtistsController {
     async pageCount(@Query('size') size: number = 10) {
         return this.artistsService.getPageCount({size})
     }
+
+    @Post()
+    async create(@Body() body: { id: number; name: string }) {
+        const { id, name } = body;
+        return this.artistsService.create({ id, name });
+      }
 }

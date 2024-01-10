@@ -31,6 +31,10 @@ export class ReleasesController {
         country: number
     }) {
         const {id, title, genre, style, year, artist_id, label_id, country} = body;
-        return this.releasesService.create({id, title, genre, style, year, artist_id, label_id, country});
+        return this.releasesService.create({
+            id, 
+            title, 
+            genre, 
+            style, year, artist_id, label_id, country});
     }
 }
