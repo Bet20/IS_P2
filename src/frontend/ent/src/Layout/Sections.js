@@ -1,23 +1,25 @@
-import Players from "../Tables/Players";
+import Releases from "../Tables/Releases";
+import Artists from "../Tables/Artists";
+import Labels from "../Tables/Labels";
 
 const Sections = [
 
     {
-        id: "players",
-        label: "Players",
-        content: <Players/>
+        id: "releases",
+        label: "releases",
+        content: <Releases/>
     },
 
     {
-        id: "teams",
-        label: "Teams",
-        content: <h1>Teams - Work in progresss</h1>
+        id: "artists",
+        label: "Artists",
+        content: <Artists/>
     },
 
     {
-        id: "countries",
-        label: "Countries",
-        content: <h1>Countries - Work in progress</h1>
+        id: "labels",
+        label: "Labels",
+        content: <Labels/>
     }
 
 ];

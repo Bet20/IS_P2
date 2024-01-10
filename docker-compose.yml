@@ -102,7 +102,7 @@ services:
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
       WEB_PORT: ${EXT_PORT_FRONTEND_ENT}
-      API_ENTITIES_URL: "localhost:${EXT_PORT_API_ENTITIES}"
+      API_ENTITIES_URL: "0.0.0.0:${EXT_PORT_API_ENTITIES}"
     depends_on:
       - api-entities
 

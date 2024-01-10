@@ -10,51 +10,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 // Define the data model
-model Country {
+model countries {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   geom      Json?
-  createdOn DateTime @default(now())
-  updatedOn DateTime @default(now())
+  created_on DateTime @default(now())
+  updated_on DateTime @default(now())
+
+  releases releases[]
 }
 
-model Artist {
+model artists {
   id        Int      @id
   name      String
-  createdOn DateTime @default(now())
-  updatedOn DateTime @default(now())
+  created_on DateTime @default(now())
+  updated_on DateTime @default(now())
 
   // Define relationships
-  releases  Release[]
+  releases  releases[]
 }
 
-model Label {
+model labels {
   id           Int      @id
   name         String
-  companyName  String
-  createdOn    DateTime @default(now())
-  updatedOn    DateTime @default(now())
+  company_name  String?
+  created_on    DateTime @default(now())
+  updated_on    DateTime @default(now())
 
   // Define relationships
-  releases     Release[]
+  releases     releases[]
 }
 
-model Release {
+model releases {
   id        Int      @id
   title     String
-  status    String
-  year      String
-  genre     String
-  style     String
-  country   Int?
-  labelId   Int?
-  artistId  Int?
+  status    String?
+  year      String?
+  genre     String?
+  style     String?
   notes     String?
-  createdOn DateTime @default(now())
-  updatedOn DateTime @default(now())
+  created_on DateTime @default(now())
+  updated_on DateTime @default(now())
+
+  country  Int?
+  label_id Int?
+  artist_id Int?
 
   // Define relationships
-  country   Country? @relation(fields: [country], references: [id])
-  label     Label?   @relation(fields: [labelId], references: [id])
-  artist    Artist?  @relation(fields: [artistId], references: [id])
+  c   countries? @relation(fields: [country], references: [id])
+  l     labels?   @relation(fields: [label_id], references: [id])
+  a    artists?  @relation(fields: [artist_id], references: [id])
 }

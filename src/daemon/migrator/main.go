@@ -17,18 +17,9 @@ const (
 
 func main() {
 	fmt.Printf("running Migrator (version %s)", VERSION)
-	// args := os.Args
-	// if len(args) > 1 {
-	// 	documentId := args[1]
-
-	// 	document := db.GetDocument(documentId)
-	// 	db.AddDocumentToRelationalDatabase(document)
-	// 	return
-	// }
-
 	for range time.Tick(MIGRATOR_TICK) {
 		fmt.Printf("MIGRATOR TICK")
-    fmt.Printf("%v", db.GetAllDocuments())
+		fmt.Printf("%v", db.GetAllDocuments())
 		consumer.Consume()
 	}
 }

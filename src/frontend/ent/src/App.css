@@ -40,9 +40,9 @@
 }
 
 .App > .Content {
-    background: lightgray;
+    background: #0c132b;
     width: 100%;
-    color: black;
+    color: white;
     padding-left: 2rem;
     padding-bottom: 2rem;
     padding-right: 2rem;

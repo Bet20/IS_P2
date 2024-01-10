@@ -20,7 +20,7 @@ CREATE TABLE public.artists (
 CREATE TABLE public.labels (
   id INT PRIMARY KEY UNIQUE,
   name VARCHAR(250) NOT NULL,
-  company_name VARCHAR(250) NOT NULL,
+  company_name VARCHAR(250),
   created_on      TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_on      TIMESTAMP NOT NULL DEFAULT NOW()
 );
