@@ -22,5 +22,6 @@ export class ArtistsController {
     async create(@Body() body: { id: number; name: string }) {
         const { id, name } = body;
         return this.artistsService.create({ id, name });
-      }
+    }
+
 }

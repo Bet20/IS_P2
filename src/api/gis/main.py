@@ -53,7 +53,7 @@ LIMIT 1000;""")
             "type": "feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [longitude, latitude]
+                "coordinates": [latitude, longitude]
             },
             "properties": {
                 "id": id,
