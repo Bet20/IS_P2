@@ -3,8 +3,7 @@ import json
 
 USER = "is"
 PASSWORD = "is"
-HOST = "is-db"
-PORT = "5432"
+HOST = "db-xml"
 DATABASE = "is"
 
 connection = None
@@ -20,7 +19,6 @@ def execute_query(query, params=None, fetch=True, prefix=xml_table_prefix):
         connection = psycopg2.connect(user=USER,
                                       password=PASSWORD,
                                       host=HOST,
-                                      port=PORT,
                                       database=DATABASE)
 
         cursor = connection.cursor()

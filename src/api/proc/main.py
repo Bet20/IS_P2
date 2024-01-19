@@ -1,3 +1,4 @@
+import os
 import sys
 
 from flask import Flask, jsonify, request
@@ -16,16 +17,26 @@ CORS(app)
 
 def rpc_call(method, *args):
     try:
-        with xmlrpc.client.ServerProxy("http://rpc-server:9000/") as proxy:
+        # get RPC_SERVER_PORT from env as arg to server proxy
+        proxy = xmlrpc.client.ServerProxy('http://rpc-server:9000', allow_none=True)
+        out = None
+        if len(args) > 0:
             out = getattr(proxy, method)(*args)
-            return jsonify(out)
+        else:
+            out = getattr(proxy, method)()
+
+        return jsonify(out)
     except Exception as e:
         print("Error:", e)
         return jsonify({"error": str(e)})
 
 @app.route('/api/releases', methods=['GET'])
 def get_releases():
-    return rpc_call("get_releases")
+    try:
+        return rpc_call("get_releases")
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": str(e)})
 
 @app.route('/api/labels', methods=['GET'])
 def get_labels():

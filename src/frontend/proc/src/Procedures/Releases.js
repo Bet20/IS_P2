@@ -3,7 +3,7 @@ import {Box, CircularProgress, Container, FormControl, InputLabel, MenuItem, Sel
 
 function Releases() {
 
-    const [selectedDocument, setSelectedDocument] = useState("");
+    const [selectedDocument, setSelectedDocument] = useState("1");
 
     const [procData, setProcData] = useState(null);
     const [gqlData, setGQLData] = useState(null);
@@ -11,13 +11,16 @@ function Releases() {
     useEffect(() => {
         //!FIXME: this is to simulate how to retrieve data from the server
         //!FIXME: the entities server URL is available on process.env.REACT_APP_API_ENTITIES_URL
+
+        
+
         setProcData(null);
         setGQLData(null);
 
         if (selectedDocument) {
             setTimeout(() => {
                 console.log(`fetching from ${process.env.REACT_APP_API_PROC_URL}`);
-                fetch(`http://0.0.0.0:20004/api/releases`)
+                fetch(`http://localhost:20004/api/releases`)
                     .then((r) => {
                         if (!r.ok) {
                             throw new Error(`HTTP error! Status: ${r.status}`);
