@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Box, CircularProgress, Container, FormControl, InputLabel, MenuItem, Select, Stack} from "@mui/material";
+import ReleasesList from "../Components/ReleasesList";
 
 const DEMO_TEAMS = [
     {"team": "Manchester United", country: "UK"},
@@ -66,14 +67,14 @@ function ReleasesByGenre() {
 
     return (
         <>
-            <h1>Top Teams</h1>
+            <h1>Releases By Genre</h1>
 
             <Container maxWidth="100%"
                        sx={{backgroundColor: 'background.default', padding: "2rem", borderRadius: "1rem"}}>
                 <Box>
                     <h2 style={{color: "white"}}>Options</h2>
                     <FormControl fullWidth>
-                        <InputLabel id="countries-select-label">Country</InputLabel>
+                        <InputLabel id="countries-select-label">Genre</InputLabel>
                         <Select
                             labelId="countries-select-label"
                             id="demo-simple-select"
@@ -103,12 +104,8 @@ function ReleasesByGenre() {
                 <h2>Results <small>(PROC)</small></h2>
                 {
                     releases ?
-                        <ul>
-                            {
-                                releases.map(data => <li><Stack>{data.title} - {data.style} - {data.year}</Stack></li>)
-                            }
-                        </ul> :
-                        selectedGenre ? <CircularProgress/> : "--"
+                        <ReleasesList releases={releases}/> : <>
+                        {selectedGenre ? <CircularProgress/> : "--"} </>
                 }
                 <h2>Results <small>(GraphQL)</small></h2>
                 {

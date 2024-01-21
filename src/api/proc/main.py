@@ -17,7 +17,6 @@ CORS(app)
 
 def rpc_call(method, *args):
     try:
-        # get RPC_SERVER_PORT from env as arg to server proxy
         proxy = xmlrpc.client.ServerProxy('http://rpc-server:9000', allow_none=True)
         out = None
         if len(args) > 0:

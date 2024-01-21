@@ -6,5 +6,7 @@ pandas==2.1.4
 flask==3.0.0
 flask_cors
 flask-magql==1.0.0
+flask_sqlalchemy
+flask_migrate
 requests==2.31.0
 pika

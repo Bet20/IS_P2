@@ -80,7 +80,7 @@ function ReleasesByGenre() {
 
     return (
         <>
-            <h1>Top Teams</h1>
+            <h1>Releases By Country</h1>
 
             <Container maxWidth="100%"
                        sx={{backgroundColor: 'background.default', padding: "2rem", borderRadius: "1rem"}}>
@@ -116,10 +116,9 @@ function ReleasesByGenre() {
 
                 <h2>Results <small>(PROC)</small></h2>
                 {
-                    <>
-                    <ReleasesList releases={releases}/>
-                        selectedCountry ? <CircularProgress/> : "--"
-                    </>
+                    releases ?
+                        <ReleasesList releases={releases}/> : <>
+                        {selectedCountry ? <CircularProgress/> : "--"} </>
                 }
                 <h2>Results <small>(GraphQL)</small></h2>
                 {

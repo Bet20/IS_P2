@@ -11,10 +11,59 @@ import {
     Item,
     Typography
 } from "@mui/material";
+import {ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql} from '@apollo/client';
 import ReleasesList from "../Components/ReleasesList";
 
+const client = new ApolloClient({
+    uri: 'http://0.0.0.0:20003', // Replace with your GraphQL server endpoint
+    cache: new InMemoryCache(),
+});
 
+const GET_RELEASES_BY_ARTIST = gql`
+  query ReleasesByArtist($artistId: Int!) {
+    releasesByArtist(artistId: $artistId) {
+      id
+      title
+      status
+      year
+      genre
+      style
+      country {
+        id
+        name
+      }
+      label {
+        id
+        name
+      }
+      artist {
+        id
+        name
+      }
+      notes
+      created_on
+      updated_on
+    }
+  }
+`;
 
+function ReleasesByArtistQL({artistId}) {
+    const {loading, error, data} = useQuery(GET_RELEASES_BY_ARTIST, {
+        variables: {artistId},
+    });
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+
+    const releases = data.releasesByArtist;
+
+    // Now you can use the 'releases' data in your component
+    console.log(releases);
+
+    return (
+        <ReleasesList releases={releases}/>
+    );
+}
 
 
 function ReleasesByArtist() {
@@ -102,19 +151,17 @@ function ReleasesByArtist() {
                 <h2>Results <small>(PROC)</small></h2>
                 {
                     <>
-                    <ReleasesList releases={releases}/>
-                        selectedArtist ? <CircularProgress/> : "--"
+                        <ReleasesList releases={releases}/>
+                        {selectedArtist ? <CircularProgress/> : "--"}
                     </>
                 }
                 <h2>Results <small>(GraphQL)</small></h2>
                 {
-                    gqlData ?
-                        <ul>
-                            {
-                                gqlData.map(data => <li>{data.team}</li>)
-                            }
-                        </ul> :
-                        selectedArtist ? <CircularProgress/> : "--"
+                    selectedArtist ?
+                        <ApolloProvider client={client}>
+                            <ReleasesByArtist artistId={selectedArtist.id}/>
+                        </ApolloProvider>
+                        : <CircularProgress/>
                 }
             </Container>
         </>
