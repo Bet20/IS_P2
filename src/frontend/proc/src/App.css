@@ -40,11 +40,16 @@
 }
 
 .App > .Content {
-    background: lightgray;
+    background: white;
     width: 100%;
     color: black;
     padding-left: 2rem;
     padding-bottom: 2rem;
     padding-right: 2rem;
     overflow-y: scroll;
+}
+
+.release-card {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+    background: none;
 }

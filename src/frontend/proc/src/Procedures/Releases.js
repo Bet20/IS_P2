@@ -12,8 +12,6 @@ function Releases() {
         //!FIXME: this is to simulate how to retrieve data from the server
         //!FIXME: the entities server URL is available on process.env.REACT_APP_API_ENTITIES_URL
 
-        
-
         setProcData(null);
         setGQLData(null);
 

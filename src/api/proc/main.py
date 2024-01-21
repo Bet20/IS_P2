@@ -42,10 +42,6 @@ def get_releases():
 def get_labels():
     return rpc_call("get_labels")
 
-@app.route('/api/artists', methods=['GET'])
-def get_artists():
-    return rpc_call("get_artists")
-
 @app.route('/api/genre', methods=['GET'])
 def get_genre():
     arg = request.args.get('genre')
@@ -59,6 +55,39 @@ def get_music_before_seventies():
 def get_music_from_artist():
     arg = request.args.get('artist')
     return rpc_call("get_music_from_artist", arg)
+
+@app.route('/api/genres', methods=['GET'])
+def get_genres():
+    return rpc_call("get_genres")
+
+@app.route('/api/releases_by_genre', methods=['GET'])
+def get_releases_by_genre():
+    arg = request.args.get('genre')
+    print(arg)
+    return rpc_call("get_releases_by_genre", arg)
+
+@app.route('/api/countries', methods=['GET'])
+def get_countries():
+    return rpc_call("get_countries")
+
+@app.route('/api/releases_by_country', methods=['GET'])
+def get_releases_by_country():
+    arg = request.args.get('country')
+    return rpc_call("get_releases_by_country", arg)
+
+@app.route('/api/artists', methods=['GET'])
+def get_artists():
+    return rpc_call("get_artists")
+
+@app.route('/api/releases_by_artist', methods=['GET'])
+def get_releases_from_artist():
+    arg = request.args.get('artist')
+    return rpc_call("get_releases_from_artist", arg)
+
+@app.route('/api/releases_by_label', methods=['GET'])
+def get_releases_from_label():
+    arg = request.args.get('label')
+    return rpc_call("get_releases_by_label", arg)
 
 if __name__ == '__main__':
     print("Starting API...")

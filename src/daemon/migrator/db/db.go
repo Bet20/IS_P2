@@ -41,7 +41,7 @@ func GetDocument(documentId string) entities.Discogs {
 	utils.E(err)
 	defer documents.Close()
 
-  fmt.Println("DOCUMENT ID: ", documentId)
+	fmt.Println("DOCUMENT ID: ", documentId)
 
 	var discogsSlice []entities.Discogs
 
@@ -54,7 +54,7 @@ func GetDocument(documentId string) entities.Discogs {
 		err = xml.Unmarshal([]byte(rawData), &discogs)
 		utils.E(err)
 
-    fmt.Printf("%v", discogs)
+		fmt.Printf("%v", discogs)
 
 		discogsSlice = append(discogsSlice, discogs)
 	}
@@ -170,6 +170,24 @@ func ImportedDocuments() []ImportedDocument {
 	documents.Close()
 	conn.Close()
 	return imported_documents
+}
+
+func AddDocumentToConvertedDocuments(documentSrc, documentSize, documentDst string) {
+	conn, err := sql.Open("postgres", CONNECTION_STR_XML)
+	utils.E(err, fmt.Sprintf("connectionString: %s produced error", CONNECTION_STR_XML))
+
+	if conn.Ping() != nil {
+		panic("Can't ping")
+	}
+
+	if conn == nil {
+		panic("Connection is nil")
+	}
+
+	_, err = conn.Exec("INSERT INTO converted_documents (src, file_size, dst) VALUES ($1, $2, $3)", documentSrc, documentSize, documentDst)
+	utils.E(err)
+
+	conn.Close()
 }
 
 func (doc *ImportedDocument) Print() {

@@ -54,3 +54,48 @@ def get_documents_from_db():
             connection.close()
             print("Fetched documents from database")
             return documents
+
+def set_document_as_converted(src, file_size, dst) -> bool:
+    try:
+        connection = psycopg2.connect(user=USER,
+                                      password=PASSWORD,
+                                      host=HOST,
+                                      dbname=DBNAME)
+
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO converted_documents (src, file_size, dst) VALUES (%s, %s, %s)", (src, file_size, dst))
+        connection.commit()
+
+    except (Exception, psycopg2.Error) as error:
+        print(f"Failed to fetch data with {error}")
+        return False
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("Inserted document into database")
+            return True
+
+def get_documents_from_converted_documents():
+    try:
+        connection = psycopg2.connect(user=USER,
+                                      password=PASSWORD,
+                                      host=HOST,
+                                      dbname=DBNAME)
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM converted_documents")
+        documents = cursor.fetchall()
+        return documents
+
+    except (Exception, psycopg2.Error) as error:
+        print(f"Failed to fetch data with {error}")
+        return []
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("Fetched documents from database")
+            return documents

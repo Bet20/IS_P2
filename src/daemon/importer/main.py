@@ -7,7 +7,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 
 from utils.to_xml_converter import CSVtoXMLConverter
-from utils.uploader import upload_file_to_db, get_documents_from_db
+from utils.uploader import upload_file_to_db, get_documents_from_db, get_documents_from_converted_documents, \
+    set_document_as_converted
 
 
 def get_csv_files_in_input_folder():
@@ -55,12 +56,12 @@ class CSVHandler(FileSystemEventHandler):
         f.close()
 
         if upload_file_to_db(csv_path, data):
-            print("ok!")
+            set_document_as_converted(csv_path, os.path.getsize(csv_path), xml_path)
 
         # !TODO: we should store the XML document into the imported_documents table
 
     async def get_converted_files(self):
-        documents = get_documents_from_db()
+        documents = get_documents_from_converted_documents()
         if len(documents) > 0:
             return [doc[1] for doc in documents]
         # !TODO: you should retrieve from the database the files that were already converted before
